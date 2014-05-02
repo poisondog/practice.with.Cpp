@@ -79,11 +79,11 @@ GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
 # compiles fast and for ordinary users its source rarely changes.
 $(DIR_OBJECT_TEST)/gtest-all.o : $(GTEST_SRCS_)
 	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
-            $(GTEST_DIR)/src/gtest-all.cc -o $(DIR_OBJECT_TEST)/gtest-all.o
+            $(GTEST_DIR)/src/gtest-all.cc -o $@
 
 $(DIR_OBJECT_TEST)/gtest_main.o : $(GTEST_SRCS_)
 	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
-            $(GTEST_DIR)/src/gtest_main.cc -o $(DIR_OBJECT_TEST)/gtest_main.o
+            $(GTEST_DIR)/src/gtest_main.cc -o $@
 
 gtest.a : $(DIR_OBJECT_TEST)/gtest-all.o
 	$(AR) $(ARFLAGS) $@ $^
@@ -96,11 +96,11 @@ gtest_main.a : $(DIR_OBJECT_TEST)/gtest-all.o $(DIR_OBJECT_TEST)/gtest_main.o
 # function.
 
 $(DIR_OBJECT_MAIN)/sample1.o : $(DIR_SRC_MAIN)/sample1.cc $(DIR_SRC_MAIN)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_MAIN)/sample1.cc -o $(DIR_OBJECT_MAIN)/sample1.o
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_MAIN)/sample1.cc -o $@
 
 $(DIR_OBJECT_TEST)/sample1_unittest.o : $(DIR_SRC_TEST)/sample1_unittest.cc \
                      $(DIR_SRC_MAIN)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_TEST)/sample1_unittest.cc -o $(DIR_OBJECT_TEST)/sample1_unittest.o
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_TEST)/sample1_unittest.cc -o $@
 
 sample1_unittest : $(DIR_OBJECT_MAIN)/sample1.o $(DIR_OBJECT_TEST)/sample1_unittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
