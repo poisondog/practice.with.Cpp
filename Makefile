@@ -26,13 +26,13 @@ DIR_SRC_MAIN = $(DIR_SRC)/main
 DIR_SRC_TEST = $(DIR_SRC)/test
 
 # Where to save generate file.
-TARGET_DIR = target
+DIR_TARGET = target
 
 # Where to save object file.
-DIR_OBJECT_MAIN = $(TARGET_DIR)/main
+DIR_OBJECT_MAIN = $(DIR_TARGET)/main
 
 # Where to save test file object
-DIR_OBJECT_TEST = $(TARGET_DIR)/test
+DIR_OBJECT_TEST = $(DIR_TARGET)/test
 
 # Flags passed to the preprocessor.
 # Set Google Test's header directory as a system directory, such that
@@ -57,8 +57,8 @@ all : $(TESTS)
 
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a *.o
-	rm -rf $(TARGET_DIR)
-	mkdir $(TARGET_DIR)
+	rm -rf $(DIR_TARGET)
+	mkdir $(DIR_TARGET)
 	mkdir $(DIR_OBJECT_MAIN)
 	mkdir $(DIR_OBJECT_TEST)
 
@@ -79,13 +79,11 @@ GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
 # compiles fast and for ordinary users its source rarely changes.
 $(DIR_OBJECT_TEST)/gtest-all.o : $(GTEST_SRCS_)
 	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
-            $(GTEST_DIR)/src/gtest-all.cc
-	mv gtest-all.o $(DIR_OBJECT_TEST)
+            $(GTEST_DIR)/src/gtest-all.cc -o $(DIR_OBJECT_TEST)/gtest-all.o
 
 $(DIR_OBJECT_TEST)/gtest_main.o : $(GTEST_SRCS_)
 	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
-            $(GTEST_DIR)/src/gtest_main.cc
-	mv gtest_main.o $(DIR_OBJECT_TEST)
+            $(GTEST_DIR)/src/gtest_main.cc -o $(DIR_OBJECT_TEST)/gtest_main.o
 
 gtest.a : $(DIR_OBJECT_TEST)/gtest-all.o
 	$(AR) $(ARFLAGS) $@ $^
@@ -98,13 +96,11 @@ gtest_main.a : $(DIR_OBJECT_TEST)/gtest-all.o $(DIR_OBJECT_TEST)/gtest_main.o
 # function.
 
 $(DIR_OBJECT_MAIN)/sample1.o : $(DIR_SRC_MAIN)/sample1.cc $(DIR_SRC_MAIN)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_MAIN)/sample1.cc
-	mv sample1.o $(DIR_OBJECT_MAIN)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_MAIN)/sample1.cc -o $(DIR_OBJECT_MAIN)/sample1.o
 
 $(DIR_OBJECT_TEST)/sample1_unittest.o : $(DIR_SRC_TEST)/sample1_unittest.cc \
                      $(DIR_SRC_MAIN)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_TEST)/sample1_unittest.cc
-	mv sample1_unittest.o $(DIR_OBJECT_TEST)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_TEST)/sample1_unittest.cc -o $(DIR_OBJECT_TEST)/sample1_unittest.o
 
 sample1_unittest : $(DIR_OBJECT_MAIN)/sample1.o $(DIR_OBJECT_TEST)/sample1_unittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
