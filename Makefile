@@ -16,8 +16,23 @@
 # Remember to tweak this if you move this file.
 GTEST_DIR = ../../../usr/gtest
 
-# Where to find user code.
-USER_DIR = src
+# Where to find all user code.
+DIR_SRC = src
+
+# Where to save main source file.
+DIR_SRC_MAIN = $(DIR_SRC)/main
+
+# Where to save test source file.
+DIR_SRC_TEST = $(DIR_SRC)/test
+
+# Where to save generate file.
+TARGET_DIR = target
+
+# Where to save object file.
+DIR_OBJECT_MAIN = $(TARGET_DIR)/main
+
+# Where to save test file object
+DIR_OBJECT_TEST = $(TARGET_DIR)/test
 
 # Flags passed to the preprocessor.
 # Set Google Test's header directory as a system directory, such that
@@ -42,6 +57,15 @@ all : $(TESTS)
 
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a *.o
+	rm -rf $(TARGET_DIR)
+	mkdir $(TARGET_DIR)
+	mkdir $(DIR_OBJECT_MAIN)
+	mkdir $(DIR_OBJECT_TEST)
+
+initial :
+	mkdir $(DIR_SRC)
+	mkdir $(DIR_SRC_MAIN)
+	mkdir $(DIR_SRC_TEST)
 
 # Builds gtest.a and gtest_main.a.
 
@@ -53,30 +77,34 @@ GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
 # implementation details, the dependencies specified below are
 # conservative and not optimized.  This is fine as Google Test
 # compiles fast and for ordinary users its source rarely changes.
-gtest-all.o : $(GTEST_SRCS_)
+$(DIR_OBJECT_TEST)/gtest-all.o : $(GTEST_SRCS_)
 	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
             $(GTEST_DIR)/src/gtest-all.cc
+	mv gtest-all.o $(DIR_OBJECT_TEST)
 
-gtest_main.o : $(GTEST_SRCS_)
+$(DIR_OBJECT_TEST)/gtest_main.o : $(GTEST_SRCS_)
 	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
             $(GTEST_DIR)/src/gtest_main.cc
+	mv gtest_main.o $(DIR_OBJECT_TEST)
 
-gtest.a : gtest-all.o
+gtest.a : $(DIR_OBJECT_TEST)/gtest-all.o
 	$(AR) $(ARFLAGS) $@ $^
 
-gtest_main.a : gtest-all.o gtest_main.o
+gtest_main.a : $(DIR_OBJECT_TEST)/gtest-all.o $(DIR_OBJECT_TEST)/gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 
 # Builds a sample test.  A test should link with either gtest.a or
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 
-sample1.o : $(USER_DIR)/sample1.cc $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1.cc
+$(DIR_OBJECT_MAIN)/sample1.o : $(DIR_SRC_MAIN)/sample1.cc $(DIR_SRC_MAIN)/sample1.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_MAIN)/sample1.cc
+	mv sample1.o $(DIR_OBJECT_MAIN)
 
-sample1_unittest.o : $(USER_DIR)/sample1_unittest.cc \
-                     $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1_unittest.cc
+$(DIR_OBJECT_TEST)/sample1_unittest.o : $(DIR_SRC_TEST)/sample1_unittest.cc \
+                     $(DIR_SRC_MAIN)/sample1.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_TEST)/sample1_unittest.cc
+	mv sample1_unittest.o $(DIR_OBJECT_TEST)
 
-sample1_unittest : sample1.o sample1_unittest.o gtest_main.a
+sample1_unittest : $(DIR_OBJECT_MAIN)/sample1.o $(DIR_OBJECT_TEST)/sample1_unittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
