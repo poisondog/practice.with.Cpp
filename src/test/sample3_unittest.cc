@@ -63,7 +63,7 @@
 //
 // </TechnicalDetails>
 
-#include "sample3-inl.h"
+#include "../main/sample3-inl.h"
 #include "gtest/gtest.h"
 
 // To use a test fixture, derive a class from testing::Test.
