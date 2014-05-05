@@ -44,7 +44,7 @@ CXXFLAGS += -g -Wall -Wextra -pthread
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = sample1_unittest
+TESTS = sample1_unittest sample2_unittest
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -97,10 +97,14 @@ gtest_main.a : $(DIR_OBJECT_TEST)/gtest-all.o $(DIR_OBJECT_TEST)/gtest_main.o
 
 $(DIR_OBJECT_MAIN)/sample1.o : $(DIR_SRC_MAIN)/sample1.cc $(DIR_SRC_MAIN)/sample1.h $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_MAIN)/sample1.cc -o $@
-
-$(DIR_OBJECT_TEST)/sample1_unittest.o : $(DIR_SRC_TEST)/sample1_unittest.cc \
-                     $(DIR_SRC_MAIN)/sample1.h $(GTEST_HEADERS)
+$(DIR_OBJECT_TEST)/sample1_unittest.o : $(DIR_SRC_TEST)/sample1_unittest.cc $(DIR_SRC_MAIN)/sample1.h $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_TEST)/sample1_unittest.cc -o $@
-
 sample1_unittest : $(DIR_OBJECT_MAIN)/sample1.o $(DIR_OBJECT_TEST)/sample1_unittest.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+$(DIR_OBJECT_MAIN)/sample2.o : $(DIR_SRC_MAIN)/sample2.cc $(DIR_SRC_MAIN)/sample2.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_MAIN)/sample2.cc -o $@
+$(DIR_OBJECT_TEST)/sample2_unittest.o : $(DIR_SRC_TEST)/sample2_unittest.cc $(DIR_SRC_MAIN)/sample2.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(DIR_SRC_TEST)/sample2_unittest.cc -o $@
+sample2_unittest : $(DIR_OBJECT_MAIN)/sample2.o $(DIR_OBJECT_TEST)/sample2_unittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
