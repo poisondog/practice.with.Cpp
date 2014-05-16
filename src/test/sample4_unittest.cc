@@ -30,7 +30,7 @@
 // Author: wan@google.com (Zhanyong Wan)
 
 #include "gtest/gtest.h"
-#include "sample4.h"
+#include "../main/sample4.h"
 
 // Tests the Increment() method.
 TEST(Counter, Increment) {
