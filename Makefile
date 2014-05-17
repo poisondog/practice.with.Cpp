@@ -47,6 +47,7 @@ CXXFLAGS += -g -Wall -Wextra -pthread
 TESTS = $(DIR_TARGET)/sample1_unittest \
 	$(DIR_TARGET)/sample2_unittest \
 	$(DIR_TARGET)/sample4_unittest \
+	$(DIR_TARGET)/all_unittest \
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -94,6 +95,9 @@ $(DIR_OBJECT_TEST)/gtest_main.a : $(DIR_OBJECT_TEST)/gtest-all.o $(DIR_OBJECT_TE
 # Builds a sample test.  A test should link with either gtest.a or
 # gtest_main.a, depending on whether it defines its own main()
 # function.
+
+$(DIR_TARGET)/all_unittest : $(DIR_OBJECT_MAIN)/*.o $(DIR_OBJECT_TEST)/*_unittest.o $(DIR_OBJECT_TEST)/gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
 $(DIR_OBJECT_MAIN)/%.o : $(DIR_SRC_MAIN)/%.cc $(DIR_SRC_MAIN)/%.h $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
